@@ -7,6 +7,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, LineCh
 import { Sidebar } from "./components/Sidebar";
 import StatsCards from "@/components/dashboard/StatsCards";
 import RecentAlerts from "@/components/dashboard/RecentAlerts";
+import SampleDataButton from "@/components/SampleDataButton";
 
 const AdminDashboard = () => {
   const [selectedTimeframe, setSelectedTimeframe] = useState("week");
@@ -39,9 +40,12 @@ const AdminDashboard = () => {
     <div className="min-h-screen bg-gray-50">
       <Sidebar />
       <div className="ml-64 p-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard Overview</h1>
-          <p className="text-gray-600">Welcome back! Here's what's happening at your school today.</p>
+        <div className="mb-8 flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard Overview</h1>
+            <p className="text-gray-600">Welcome back! Here's what's happening at your school today.</p>
+          </div>
+          <SampleDataButton />
         </div>
 
         <StatsCards />
@@ -51,7 +55,7 @@ const AdminDashboard = () => {
           <Card>
             <CardHeader>
               <CardTitle>Weekly Attendance</CardTitle>
-              <CardDescription>Student attendance for this week</CardDescription>
+              <CardDescription>Student attendance for this week (Sample Data)</CardDescription>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
@@ -70,7 +74,7 @@ const AdminDashboard = () => {
           <Card>
             <CardHeader>
               <CardTitle>Subject Performance</CardTitle>
-              <CardDescription>Average grades by subject</CardDescription>
+              <CardDescription>Average grades by subject (Sample Data)</CardDescription>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
@@ -90,7 +94,7 @@ const AdminDashboard = () => {
           <Card>
             <CardHeader>
               <CardTitle>Class Distribution</CardTitle>
-              <CardDescription>Students by grade level</CardDescription>
+              <CardDescription>Students by grade level (Sample Data)</CardDescription>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={250}>

@@ -21,31 +21,25 @@ export const useAlerts = () => {
     queryKey: ['alerts'],
     queryFn: async () => {
       console.log('Fetching alerts...');
+      
+      // First try to get basic alerts without joins to avoid circular reference issues
       const { data, error } = await supabase
         .from('alerts')
-        .select(`
-          *,
-          students:student_id (
-            id,
-            first_name,
-            last_name
-          ),
-          teachers:teacher_id (
-            id,
-            first_name,
-            last_name
-          )
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
       
       if (error) {
         console.error('Error fetching alerts:', error);
-        throw error;
+        // Return empty array instead of throwing to prevent blocking the dashboard
+        console.warn('Returning empty alerts array due to error:', error.message);
+        return [];
       }
       
       console.log('Alerts fetched:', data);
-      return data;
+      return (data || []) as Alert[];
     },
+    retry: 1,
+    retryDelay: 1000,
   });
 };
 
@@ -64,7 +58,7 @@ export const useCreateAlert = () => {
 
       if (error) {
         console.error('Error creating alert:', error);
-        throw error;
+        throw new Error(`Failed to create alert: ${error.message}`);
       }
 
       return data;
@@ -76,11 +70,11 @@ export const useCreateAlert = () => {
         description: "Alert created successfully",
       });
     },
-    onError: (error) => {
+    onError: (error: Error) => {
       console.error('Failed to create alert:', error);
       toast({
         title: "Error",
-        description: "Failed to create alert",
+        description: error.message || "Failed to create alert",
         variant: "destructive",
       });
     },

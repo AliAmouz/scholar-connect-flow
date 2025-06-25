@@ -27,12 +27,14 @@ export const useTeachers = () => {
       
       if (error) {
         console.error('Error fetching teachers:', error);
-        throw error;
+        throw new Error(`Failed to fetch teachers: ${error.message}`);
       }
       
       console.log('Teachers fetched:', data);
-      return data as Teacher[];
+      return (data as Teacher[]) || [];
     },
+    retry: 1,
+    retryDelay: 1000,
   });
 };
 
@@ -51,7 +53,7 @@ export const useCreateTeacher = () => {
 
       if (error) {
         console.error('Error creating teacher:', error);
-        throw error;
+        throw new Error(`Failed to create teacher: ${error.message}`);
       }
 
       return data;
@@ -63,11 +65,11 @@ export const useCreateTeacher = () => {
         description: "Teacher created successfully",
       });
     },
-    onError: (error) => {
+    onError: (error: Error) => {
       console.error('Failed to create teacher:', error);
       toast({
         title: "Error",
-        description: "Failed to create teacher",
+        description: error.message || "Failed to create teacher",
         variant: "destructive",
       });
     },

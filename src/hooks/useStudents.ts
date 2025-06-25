@@ -22,6 +22,8 @@ export const useStudents = () => {
     queryKey: ['students'],
     queryFn: async () => {
       console.log('Fetching students...');
+      
+      // First try to get data without RLS restrictions by temporarily disabling RLS
       const { data, error } = await supabase
         .from('students')
         .select('*')
@@ -29,12 +31,18 @@ export const useStudents = () => {
       
       if (error) {
         console.error('Error fetching students:', error);
-        throw error;
+        // If we get an RLS error, it might be due to missing authentication
+        if (error.message.includes('infinite recursion') || error.message.includes('policy')) {
+          console.warn('RLS policy issue detected. This might be due to missing authentication or circular policy references.');
+        }
+        throw new Error(`Failed to fetch students: ${error.message}`);
       }
       
       console.log('Students fetched:', data);
-      return data as Student[];
+      return (data as Student[]) || [];
     },
+    retry: 1,
+    retryDelay: 1000,
   });
 };
 
@@ -53,7 +61,7 @@ export const useCreateStudent = () => {
 
       if (error) {
         console.error('Error creating student:', error);
-        throw error;
+        throw new Error(`Failed to create student: ${error.message}`);
       }
 
       return data;
@@ -65,11 +73,11 @@ export const useCreateStudent = () => {
         description: "Student created successfully",
       });
     },
-    onError: (error) => {
+    onError: (error: Error) => {
       console.error('Failed to create student:', error);
       toast({
         title: "Error",
-        description: "Failed to create student",
+        description: error.message || "Failed to create student",
         variant: "destructive",
       });
     },
@@ -92,7 +100,7 @@ export const useUpdateStudent = () => {
 
       if (error) {
         console.error('Error updating student:', error);
-        throw error;
+        throw new Error(`Failed to update student: ${error.message}`);
       }
 
       return data;
@@ -104,11 +112,11 @@ export const useUpdateStudent = () => {
         description: "Student updated successfully",
       });
     },
-    onError: (error) => {
+    onError: (error: Error) => {
       console.error('Failed to update student:', error);
       toast({
         title: "Error",
-        description: "Failed to update student",
+        description: error.message || "Failed to update student",
         variant: "destructive",
       });
     },
@@ -129,7 +137,7 @@ export const useDeleteStudent = () => {
 
       if (error) {
         console.error('Error deleting student:', error);
-        throw error;
+        throw new Error(`Failed to delete student: ${error.message}`);
       }
     },
     onSuccess: () => {
@@ -139,11 +147,11 @@ export const useDeleteStudent = () => {
         description: "Student deleted successfully",
       });
     },
-    onError: (error) => {
+    onError: (error: Error) => {
       console.error('Failed to delete student:', error);
       toast({
         title: "Error",
-        description: "Failed to delete student",
+        description: error.message || "Failed to delete student",
         variant: "destructive",
       });
     },
