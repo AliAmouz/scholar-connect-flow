@@ -1,14 +1,13 @@
 
 import { useState } from "react";
 import { Sidebar } from "../components/Sidebar";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Search, Plus, BookOpen, Users } from "lucide-react";
+import { Search, Plus } from "lucide-react";
 import { useTeachers, useCreateTeacher } from "@/hooks/useTeachers";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { TeachersList } from "@/components/teachers/TeachersList";
 
 const Teachers = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -166,70 +165,10 @@ const Teachers = () => {
           </Dialog>
         </div>
 
-        {filteredTeachers.length === 0 ? (
-          <Card>
-            <CardContent className="p-8 text-center">
-              <div className="text-gray-500">
-                {teachers.length === 0 ? (
-                  <>
-                    <h3 className="text-lg font-medium mb-2">No teachers found</h3>
-                    <p>Get started by adding your first teacher.</p>
-                  </>
-                ) : (
-                  <>
-                    <h3 className="text-lg font-medium mb-2">No teachers match your search</h3>
-                    <p>Try adjusting your search terms.</p>
-                  </>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="grid gap-4">
-            {filteredTeachers.map((teacher) => (
-              <Card key={teacher.id} className="hover:shadow-md transition-shadow">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-semibold">
-                        {teacher.first_name[0]}{teacher.last_name[0]}
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-lg">{teacher.first_name} {teacher.last_name}</h3>
-                        <p className="text-gray-600">{teacher.email}</p>
-                        <p className="text-sm text-gray-500 font-medium">
-                          {teacher.subject || 'No subject assigned'}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-6">
-                      <div className="text-center">
-                        <div className="flex items-center gap-1 text-sm text-gray-600">
-                          <BookOpen className="h-4 w-4" />
-                          0 Classes
-                        </div>
-                        <div className="flex items-center gap-1 text-sm text-gray-600 mt-1">
-                          <Users className="h-4 w-4" />
-                          0 Students
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <Badge variant="default">
-                          Active
-                        </Badge>
-                        <div className="mt-2">
-                          <Button variant="outline" size="sm">
-                            View Profile
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
+        <TeachersList 
+          teachers={teachers} 
+          filteredTeachers={filteredTeachers} 
+        />
       </div>
     </div>
   );
