@@ -1,9 +1,9 @@
 
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { UserCheck, UserX } from "lucide-react";
 import { Student } from "@/hooks/useStudents";
+import { StudentActions } from "./StudentActions";
 
 interface StudentCardProps {
   student: Student;
@@ -40,9 +40,7 @@ export const StudentCard = ({ student }: StudentCardProps) => {
                 {student.status.charAt(0).toUpperCase() + student.status.slice(1)}
               </Badge>
             </div>
-            <Button variant="outline" size="sm">
-              View Details
-            </Button>
+            <StudentActions student={student} />
           </div>
         </div>
       </CardContent>
