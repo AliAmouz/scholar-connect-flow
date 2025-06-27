@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Sidebar } from "../components/Sidebar";
 import { Card, CardContent } from "@/components/ui/card";
@@ -17,13 +16,19 @@ const Students = () => {
   const { data: students = [], isLoading, error } = useStudents();
   const createStudent = useCreateStudent();
   
-  // Form state for new student
-  const [newStudent, setNewStudent] = useState({
+  // Form state for new student - Updated type to allow all status values
+  const [newStudent, setNewStudent] = useState<{
+    first_name: string;
+    last_name: string;
+    email: string;
+    grade_level: string;
+    status: "active" | "inactive" | "graduated";
+  }>({
     first_name: "",
     last_name: "",
     email: "",
     grade_level: "",
-    status: "active" as const
+    status: "active"
   });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
