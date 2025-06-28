@@ -1,8 +1,9 @@
+
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  text-align: left;
 }
 
 .logo {
@@ -39,4 +40,23 @@
 
 .read-the-docs {
   color: #888;
+}
+
+/* Mobile responsive utilities */
+@media (max-width: 640px) {
+  .recharts-responsive-container {
+    min-height: 200px !important;
+  }
+}
+
+/* Ensure charts are properly sized on mobile */
+.recharts-wrapper {
+  width: 100% !important;
+}
+
+/* Mobile menu overlay */
+@media (max-width: 1024px) {
+  body.menu-open {
+    overflow: hidden;
+  }
 }

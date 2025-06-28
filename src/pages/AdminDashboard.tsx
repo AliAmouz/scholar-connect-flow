@@ -39,30 +39,34 @@ const AdminDashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Sidebar />
-      <div className="ml-64 p-8">
-        <div className="mb-8 flex justify-between items-center">
+      <div className="lg:ml-64 p-4 lg:p-8">
+        <div className="pt-16 lg:pt-0 mb-6 lg:mb-8 flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard Overview</h1>
-            <p className="text-gray-600">Welcome back! Here's what's happening at your school today.</p>
+            <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">Dashboard Overview</h1>
+            <p className="text-gray-600 text-sm lg:text-base">Welcome back! Here's what's happening at your school today.</p>
           </div>
-          <SampleDataButton />
+          <div className="lg:self-start">
+            <SampleDataButton />
+          </div>
         </div>
 
-        <StatsCards />
+        <div className="mb-6 lg:mb-8">
+          <StatsCards />
+        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8 mb-6 lg:mb-8">
           {/* Attendance Trends */}
           <Card>
             <CardHeader>
-              <CardTitle>Weekly Attendance</CardTitle>
-              <CardDescription>Student attendance for this week (Sample Data)</CardDescription>
+              <CardTitle className="text-lg lg:text-xl">Weekly Attendance</CardTitle>
+              <CardDescription className="text-sm">Student attendance for this week (Sample Data)</CardDescription>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
+              <ResponsiveContainer width="100%" height={250} className="lg:h-[300px]">
                 <BarChart data={attendanceData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="day" />
-                  <YAxis />
+                  <XAxis dataKey="day" fontSize={12} />
+                  <YAxis fontSize={12} />
                   <Bar dataKey="present" fill="#10B981" name="Present" />
                   <Bar dataKey="absent" fill="#EF4444" name="Absent" />
                 </BarChart>
@@ -73,15 +77,15 @@ const AdminDashboard = () => {
           {/* Grade Averages */}
           <Card>
             <CardHeader>
-              <CardTitle>Subject Performance</CardTitle>
-              <CardDescription>Average grades by subject (Sample Data)</CardDescription>
+              <CardTitle className="text-lg lg:text-xl">Subject Performance</CardTitle>
+              <CardDescription className="text-sm">Average grades by subject (Sample Data)</CardDescription>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
+              <ResponsiveContainer width="100%" height={250} className="lg:h-[300px]">
                 <LineChart data={gradeData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="subject" />
-                  <YAxis domain={[0, 10]} />
+                  <XAxis dataKey="subject" fontSize={12} />
+                  <YAxis domain={[0, 10]} fontSize={12} />
                   <Line type="monotone" dataKey="average" stroke="#3B82F6" strokeWidth={3} />
                 </LineChart>
               </ResponsiveContainer>
@@ -89,23 +93,24 @@ const AdminDashboard = () => {
           </Card>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
           {/* Class Distribution */}
-          <Card>
+          <Card className="lg:col-span-1">
             <CardHeader>
-              <CardTitle>Class Distribution</CardTitle>
-              <CardDescription>Students by grade level (Sample Data)</CardDescription>
+              <CardTitle className="text-lg lg:text-xl">Class Distribution</CardTitle>
+              <CardDescription className="text-sm">Students by grade level (Sample Data)</CardDescription>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={250}>
+              <ResponsiveContainer width="100%" height={200} className="lg:h-[250px]">
                 <PieChart>
                   <Pie
                     data={classDistribution}
                     cx="50%"
                     cy="50%"
-                    innerRadius={60}
-                    outerRadius={100}
+                    innerRadius={40}
+                    outerRadius={80}
                     dataKey="value"
+                    className="lg:innerRadius-[60] lg:outerRadius-[100]"
                   >
                     {classDistribution.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
@@ -118,16 +123,18 @@ const AdminDashboard = () => {
                   <div key={index} className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></div>
-                      <span className="text-sm">{item.name}</span>
+                      <span className="text-xs lg:text-sm">{item.name}</span>
                     </div>
-                    <span className="text-sm font-medium">{item.value}</span>
+                    <span className="text-xs lg:text-sm font-medium">{item.value}</span>
                   </div>
                 ))}
               </div>
             </CardContent>
           </Card>
 
-          <RecentAlerts />
+          <div className="lg:col-span-1 xl:col-span-2">
+            <RecentAlerts />
+          </div>
         </div>
       </div>
     </div>

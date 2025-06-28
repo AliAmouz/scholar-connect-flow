@@ -88,7 +88,7 @@ const StudentProfile = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 p-4 lg:p-6">
       <div className="max-w-6xl mx-auto">
         <div className="mb-6">
           <Button 
@@ -100,45 +100,47 @@ const StudentProfile = () => {
             Back to Dashboard
           </Button>
           
-          <div className="flex items-start gap-6">
-            <Avatar className="w-24 h-24">
-              <AvatarImage src={student.photo} alt={student.name} />
-              <AvatarFallback>{student.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-            </Avatar>
-            
-            <div className="flex-1">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">{student.name}</h1>
-              <div className="flex items-center gap-4 text-gray-600 mb-4">
-                <span className="flex items-center gap-1">
-                  <Calendar className="h-4 w-4" />
-                  Class {student.class}
-                </span>
-                <span>Age {student.age}</span>
-                <Badge variant="secondary" className="bg-green-100 text-green-700">
-                  Active Student
-                </Badge>
-              </div>
+          <div className="flex flex-col lg:flex-row items-start gap-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 lg:gap-6 flex-1">
+              <Avatar className="w-20 h-20 lg:w-24 lg:h-24">
+                <AvatarImage src={student.photo} alt={student.name} />
+                <AvatarFallback>{student.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+              </Avatar>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                <div className="flex items-center gap-2">
-                  <Phone className="h-4 w-4 text-gray-400" />
-                  <span>{student.parentPhone}</span>
+              <div className="flex-1">
+                <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">{student.name}</h1>
+                <div className="flex flex-wrap items-center gap-2 lg:gap-4 text-gray-600 mb-4 text-sm lg:text-base">
+                  <span className="flex items-center gap-1">
+                    <Calendar className="h-4 w-4" />
+                    Class {student.class}
+                  </span>
+                  <span>Age {student.age}</span>
+                  <Badge variant="secondary" className="bg-green-100 text-green-700">
+                    Active Student
+                  </Badge>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Mail className="h-4 w-4 text-gray-400" />
-                  <span>{student.parentEmail}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-gray-400" />
-                  <span>{student.address}</span>
+                
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 lg:gap-4 text-xs lg:text-sm">
+                  <div className="flex items-center gap-2">
+                    <Phone className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                    <span className="truncate">{student.parentPhone}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Mail className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                    <span className="truncate">{student.parentEmail}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                    <span className="truncate">{student.address}</span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <Card className="bg-gradient-to-r from-blue-500 to-green-500 text-white border-0">
-              <CardContent className="p-6 text-center">
+            <Card className="bg-gradient-to-r from-blue-500 to-green-500 text-white border-0 w-full sm:w-auto">
+              <CardContent className="p-4 lg:p-6 text-center">
                 <p className="text-blue-100 text-sm">Overall Average</p>
-                <p className="text-3xl font-bold">{student.averageGrade}</p>
+                <p className="text-2xl lg:text-3xl font-bold">{student.averageGrade}</p>
                 <p className="text-blue-100 text-xs">out of 10</p>
               </CardContent>
             </Card>
@@ -146,30 +148,30 @@ const StudentProfile = () => {
         </div>
 
         <Tabs defaultValue="grades" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="grades">Grades & Subjects</TabsTrigger>
-            <TabsTrigger value="remarks">Teacher Remarks</TabsTrigger>
-            <TabsTrigger value="attendance">Attendance</TabsTrigger>
-            <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4 h-auto">
+            <TabsTrigger value="grades" className="text-xs lg:text-sm p-2 lg:p-3">Grades & Subjects</TabsTrigger>
+            <TabsTrigger value="remarks" className="text-xs lg:text-sm p-2 lg:p-3">Teacher Remarks</TabsTrigger>
+            <TabsTrigger value="attendance" className="text-xs lg:text-sm p-2 lg:p-3">Attendance</TabsTrigger>
+            <TabsTrigger value="overview" className="text-xs lg:text-sm p-2 lg:p-3">Overview</TabsTrigger>
           </TabsList>
 
           <TabsContent value="grades" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Current Grades</CardTitle>
-                  <CardDescription>Grades by subject for this semester</CardDescription>
+                  <CardTitle className="text-lg lg:text-xl">Current Grades</CardTitle>
+                  <CardDescription className="text-sm">Grades by subject for this semester</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
+                  <div className="space-y-3 lg:space-y-4">
                     {subjects.map((subject, index) => (
-                      <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                      <div key={index} className="flex items-center justify-between p-3 lg:p-4 bg-gray-50 rounded-lg">
                         <div className="flex items-center gap-3">
                           <div 
-                            className="w-4 h-4 rounded-full"
+                            className="w-3 h-3 lg:w-4 lg:h-4 rounded-full flex-shrink-0"
                             style={{ backgroundColor: subject.color }}
                           ></div>
-                          <span className="font-medium">{subject.name}</span>
+                          <span className="font-medium text-sm lg:text-base truncate">{subject.name}</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <span className="text-lg font-bold">{subject.currentGrade}</span>
@@ -188,15 +190,15 @@ const StudentProfile = () => {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Grade Progression</CardTitle>
-                  <CardDescription>Average grade over time</CardDescription>
+                  <CardTitle className="text-lg lg:text-xl">Grade Progression</CardTitle>
+                  <CardDescription className="text-sm">Average grade over time</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <ResponsiveContainer width="100%" height={300}>
+                  <ResponsiveContainer width="100%" height={250} className="lg:h-[300px]">
                     <LineChart data={gradeHistory}>
                       <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="month" />
-                      <YAxis domain={[0, 10]} />
+                      <XAxis dataKey="month" fontSize={12} />
+                      <YAxis domain={[0, 10]} fontSize={12} />
                       <Line 
                         type="monotone" 
                         dataKey="average" 
@@ -214,18 +216,18 @@ const StudentProfile = () => {
           <TabsContent value="remarks" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
                   <MessageSquare className="h-5 w-5" />
                   Teacher Remarks
                 </CardTitle>
-                <CardDescription>Chronological feed of teacher comments</CardDescription>
+                <CardDescription className="text-sm">Chronological feed of teacher comments</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {remarks.map((remark) => (
                     <div 
                       key={remark.id} 
-                      className={`p-4 rounded-lg border-l-4 ${
+                      className={`p-3 lg:p-4 rounded-lg border-l-4 ${
                         remark.type === 'positive' 
                           ? 'border-green-400 bg-green-50' 
                           : remark.type === 'neutral'
@@ -233,14 +235,14 @@ const StudentProfile = () => {
                           : 'border-red-400 bg-red-50'
                       }`}
                     >
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium">{remark.teacher}</span>
-                          <Badge variant="outline">{remark.subject}</Badge>
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 gap-2">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="font-medium text-sm lg:text-base">{remark.teacher}</span>
+                          <Badge variant="outline" className="text-xs">{remark.subject}</Badge>
                         </div>
-                        <span className="text-sm text-gray-500">{remark.date}</span>
+                        <span className="text-xs lg:text-sm text-gray-500">{remark.date}</span>
                       </div>
-                      <p className="text-gray-700">{remark.comment}</p>
+                      <p className="text-gray-700 text-sm lg:text-base">{remark.comment}</p>
                     </div>
                   ))}
                 </div>
@@ -251,22 +253,23 @@ const StudentProfile = () => {
           <TabsContent value="attendance" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
                   <Clock className="h-5 w-5" />
                   Absence History
                 </CardTitle>
-                <CardDescription>Record of student absences</CardDescription>
+                <CardDescription className="text-sm">Record of student absences</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {absenceHistory.map((absence, index) => (
-                    <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                    <div key={index} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 lg:p-4 bg-gray-50 rounded-lg gap-2">
                       <div>
-                        <p className="font-medium">{absence.date}</p>
-                        <p className="text-sm text-gray-600">{absence.reason}</p>
+                        <p className="font-medium text-sm lg:text-base">{absence.date}</p>
+                        <p className="text-xs lg:text-sm text-gray-600">{absence.reason}</p>
                       </div>
                       <Badge 
                         variant={absence.status === "Excused" ? "default" : "destructive"}
+                        className="self-start sm:self-center"
                       >
                         {absence.status}
                       </Badge>
@@ -278,40 +281,40 @@ const StudentProfile = () => {
           </TabsContent>
 
           <TabsContent value="overview" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Academic Performance</CardTitle>
+                  <CardTitle className="text-lg lg:text-xl">Academic Performance</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-center">
-                    <div className="text-3xl font-bold text-green-600 mb-2">{student.averageGrade}/10</div>
-                    <p className="text-gray-600">Overall Average</p>
+                    <div className="text-2xl lg:text-3xl font-bold text-green-600 mb-2">{student.averageGrade}/10</div>
+                    <p className="text-gray-600 text-sm lg:text-base">Overall Average</p>
                   </div>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Attendance Rate</CardTitle>
+                  <CardTitle className="text-lg lg:text-xl">Attendance Rate</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-center">
-                    <div className="text-3xl font-bold text-blue-600 mb-2">96%</div>
-                    <p className="text-gray-600">This Semester</p>
+                    <div className="text-2xl lg:text-3xl font-bold text-blue-600 mb-2">96%</div>
+                    <p className="text-gray-600 text-sm lg:text-base">This Semester</p>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="lg:col-span-2 xl:col-span-1">
                 <CardHeader>
-                  <CardTitle>Parent Contact</CardTitle>
+                  <CardTitle className="text-lg lg:text-xl">Parent Contact</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
-                    <p className="font-medium">{student.parentName}</p>
-                    <p className="text-sm text-gray-600">{student.parentPhone}</p>
-                    <p className="text-sm text-gray-600">{student.parentEmail}</p>
+                    <p className="font-medium text-sm lg:text-base">{student.parentName}</p>
+                    <p className="text-xs lg:text-sm text-gray-600 break-all">{student.parentPhone}</p>
+                    <p className="text-xs lg:text-sm text-gray-600 break-all">{student.parentEmail}</p>
                   </div>
                 </CardContent>
               </Card>
