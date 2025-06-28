@@ -16,8 +16,8 @@ export const StudentsHeader = ({ searchTerm, onSearchChange }: StudentsHeaderPro
         <p className="text-gray-600 text-sm lg:text-base">Manage student enrollments and information</p>
       </div>
 
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-        <div className="relative w-full sm:w-96">
+      <div className="flex flex-col gap-4 mb-6">
+        <div className="relative w-full">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
           <Input
             placeholder="Search students..."
@@ -27,7 +27,7 @@ export const StudentsHeader = ({ searchTerm, onSearchChange }: StudentsHeaderPro
           />
         </div>
         
-        <div className="w-full sm:w-auto">
+        <div className="w-full">
           <AddStudentDialog />
         </div>
       </div>

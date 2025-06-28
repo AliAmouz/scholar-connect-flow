@@ -17,6 +17,7 @@ import {
   MapPin
 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, LineChart, Line } from "recharts";
+import { Sidebar } from "./components/Sidebar";
 
 const StudentProfile = () => {
   const { id } = useParams();
@@ -88,28 +89,29 @@ const StudentProfile = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 lg:p-6">
-      <div className="max-w-6xl mx-auto">
-        <div className="mb-6">
+    <div className="min-h-screen bg-gray-50">
+      <Sidebar />
+      <div className="lg:ml-64 p-4 lg:p-6">
+        <div className="pt-16 lg:pt-0 mb-6">
           <Button 
             variant="outline" 
-            onClick={() => navigate("/admin")}
+            onClick={() => navigate("/admin/students")}
             className="mb-4"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Dashboard
+            Back to Students
           </Button>
           
-          <div className="flex flex-col lg:flex-row items-start gap-6">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 lg:gap-6 flex-1">
-              <Avatar className="w-20 h-20 lg:w-24 lg:h-24">
+          <div className="flex flex-col lg:flex-row items-start gap-4 lg:gap-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 lg:gap-6 flex-1 w-full">
+              <Avatar className="w-16 h-16 lg:w-20 lg:h-20 mx-auto sm:mx-0">
                 <AvatarImage src={student.photo} alt={student.name} />
                 <AvatarFallback>{student.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
               </Avatar>
               
-              <div className="flex-1">
-                <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">{student.name}</h1>
-                <div className="flex flex-wrap items-center gap-2 lg:gap-4 text-gray-600 mb-4 text-sm lg:text-base">
+              <div className="flex-1 text-center sm:text-left w-full sm:w-auto">
+                <h1 className="text-xl lg:text-2xl xl:text-3xl font-bold text-gray-900 mb-2">{student.name}</h1>
+                <div className="flex flex-wrap justify-center sm:justify-start items-center gap-2 lg:gap-4 text-gray-600 mb-4 text-sm lg:text-base">
                   <span className="flex items-center gap-1">
                     <Calendar className="h-4 w-4" />
                     Class {student.class}
@@ -120,24 +122,24 @@ const StudentProfile = () => {
                   </Badge>
                 </div>
                 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 lg:gap-4 text-xs lg:text-sm">
-                  <div className="flex items-center gap-2">
+                <div className="grid grid-cols-1 gap-2 text-xs lg:text-sm">
+                  <div className="flex items-center justify-center sm:justify-start gap-2">
                     <Phone className="h-4 w-4 text-gray-400 flex-shrink-0" />
-                    <span className="truncate">{student.parentPhone}</span>
+                    <span className="break-all">{student.parentPhone}</span>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-center sm:justify-start gap-2">
                     <Mail className="h-4 w-4 text-gray-400 flex-shrink-0" />
-                    <span className="truncate">{student.parentEmail}</span>
+                    <span className="break-all">{student.parentEmail}</span>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-center sm:justify-start gap-2">
                     <MapPin className="h-4 w-4 text-gray-400 flex-shrink-0" />
-                    <span className="truncate">{student.address}</span>
+                    <span className="break-all">{student.address}</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <Card className="bg-gradient-to-r from-blue-500 to-green-500 text-white border-0 w-full sm:w-auto">
+            <Card className="bg-gradient-to-r from-blue-500 to-green-500 text-white border-0 w-full sm:w-auto lg:w-48">
               <CardContent className="p-4 lg:p-6 text-center">
                 <p className="text-blue-100 text-sm">Overall Average</p>
                 <p className="text-2xl lg:text-3xl font-bold">{student.averageGrade}</p>
@@ -148,12 +150,14 @@ const StudentProfile = () => {
         </div>
 
         <Tabs defaultValue="grades" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4 h-auto">
-            <TabsTrigger value="grades" className="text-xs lg:text-sm p-2 lg:p-3">Grades & Subjects</TabsTrigger>
-            <TabsTrigger value="remarks" className="text-xs lg:text-sm p-2 lg:p-3">Teacher Remarks</TabsTrigger>
-            <TabsTrigger value="attendance" className="text-xs lg:text-sm p-2 lg:p-3">Attendance</TabsTrigger>
-            <TabsTrigger value="overview" className="text-xs lg:text-sm p-2 lg:p-3">Overview</TabsTrigger>
-          </TabsList>
+          <div className="overflow-x-auto">
+            <TabsList className="grid w-full grid-cols-4 h-auto min-w-fit">
+              <TabsTrigger value="grades" className="text-xs lg:text-sm p-2 lg:p-3 whitespace-nowrap">Grades</TabsTrigger>
+              <TabsTrigger value="remarks" className="text-xs lg:text-sm p-2 lg:p-3 whitespace-nowrap">Remarks</TabsTrigger>
+              <TabsTrigger value="attendance" className="text-xs lg:text-sm p-2 lg:p-3 whitespace-nowrap">Attendance</TabsTrigger>
+              <TabsTrigger value="overview" className="text-xs lg:text-sm p-2 lg:p-3 whitespace-nowrap">Overview</TabsTrigger>
+            </TabsList>
+          </div>
 
           <TabsContent value="grades" className="space-y-6">
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
@@ -166,14 +170,14 @@ const StudentProfile = () => {
                   <div className="space-y-3 lg:space-y-4">
                     {subjects.map((subject, index) => (
                       <div key={index} className="flex items-center justify-between p-3 lg:p-4 bg-gray-50 rounded-lg">
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 flex-1 min-w-0">
                           <div 
                             className="w-3 h-3 lg:w-4 lg:h-4 rounded-full flex-shrink-0"
                             style={{ backgroundColor: subject.color }}
                           ></div>
                           <span className="font-medium text-sm lg:text-base truncate">{subject.name}</span>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-shrink-0">
                           <span className="text-lg font-bold">{subject.currentGrade}</span>
                           <TrendingUp 
                             className={`h-4 w-4 ${
@@ -194,20 +198,22 @@ const StudentProfile = () => {
                   <CardDescription className="text-sm">Average grade over time</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <ResponsiveContainer width="100%" height={250} className="lg:h-[300px]">
-                    <LineChart data={gradeHistory}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="month" fontSize={12} />
-                      <YAxis domain={[0, 10]} fontSize={12} />
-                      <Line 
-                        type="monotone" 
-                        dataKey="average" 
-                        stroke="#3B82F6" 
-                        strokeWidth={3}
-                        dot={{ fill: '#3B82F6', strokeWidth: 2, r: 6 }}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
+                  <div className="w-full overflow-x-auto">
+                    <ResponsiveContainer width="100%" height={250} minWidth={300}>
+                      <LineChart data={gradeHistory}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="month" fontSize={12} />
+                        <YAxis domain={[0, 10]} fontSize={12} />
+                        <Line 
+                          type="monotone" 
+                          dataKey="average" 
+                          stroke="#3B82F6" 
+                          strokeWidth={3}
+                          dot={{ fill: '#3B82F6', strokeWidth: 2, r: 6 }}
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
                 </CardContent>
               </Card>
             </div>
@@ -235,14 +241,14 @@ const StudentProfile = () => {
                           : 'border-red-400 bg-red-50'
                       }`}
                     >
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 gap-2">
+                      <div className="flex flex-col gap-2 mb-2">
                         <div className="flex flex-wrap items-center gap-2">
                           <span className="font-medium text-sm lg:text-base">{remark.teacher}</span>
                           <Badge variant="outline" className="text-xs">{remark.subject}</Badge>
                         </div>
                         <span className="text-xs lg:text-sm text-gray-500">{remark.date}</span>
                       </div>
-                      <p className="text-gray-700 text-sm lg:text-base">{remark.comment}</p>
+                      <p className="text-gray-700 text-sm lg:text-base break-words">{remark.comment}</p>
                     </div>
                   ))}
                 </div>
@@ -263,13 +269,13 @@ const StudentProfile = () => {
                 <div className="space-y-4">
                   {absenceHistory.map((absence, index) => (
                     <div key={index} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 lg:p-4 bg-gray-50 rounded-lg gap-2">
-                      <div>
+                      <div className="flex-1">
                         <p className="font-medium text-sm lg:text-base">{absence.date}</p>
                         <p className="text-xs lg:text-sm text-gray-600">{absence.reason}</p>
                       </div>
                       <Badge 
                         variant={absence.status === "Excused" ? "default" : "destructive"}
-                        className="self-start sm:self-center"
+                        className="self-start sm:self-center flex-shrink-0"
                       >
                         {absence.status}
                       </Badge>
@@ -281,7 +287,7 @@ const StudentProfile = () => {
           </TabsContent>
 
           <TabsContent value="overview" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg lg:text-xl">Academic Performance</CardTitle>
@@ -306,7 +312,7 @@ const StudentProfile = () => {
                 </CardContent>
               </Card>
 
-              <Card className="lg:col-span-2 xl:col-span-1">
+              <Card className="sm:col-span-2 lg:col-span-1">
                 <CardHeader>
                   <CardTitle className="text-lg lg:text-xl">Parent Contact</CardTitle>
                 </CardHeader>
