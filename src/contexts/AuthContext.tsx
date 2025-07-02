@@ -26,6 +26,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Function to fetch user role from profiles table
   const fetchUserRole = async (userId: string) => {
     try {
+      console.log('Fetching role for user:', userId);
       const { data, error } = await supabase
         .from('profiles')
         .select('role')
@@ -37,6 +38,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return null;
       }
 
+      console.log('User role fetched:', data?.role);
       return data?.role || null;
     } catch (error) {
       console.error('Error fetching user role:', error);
@@ -46,6 +48,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Function to handle role-based navigation
   const navigateBasedOnRole = (role: string) => {
+    console.log('Navigating based on role:', role);
     switch (role) {
       case 'admin':
         navigate('/admin');
@@ -57,12 +60,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         navigate('/student/1'); // Default student profile for parents
         break;
       default:
-        navigate('/auth');
+        console.log('Unknown role, staying on current page');
         break;
     }
   };
 
   useEffect(() => {
+    console.log('Setting up auth state listener');
+    
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
@@ -75,11 +80,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           // Fetch user role when user is authenticated
           setTimeout(async () => {
             const role = await fetchUserRole(session.user.id);
-            console.log('User role fetched:', role);
+            console.log('Setting user role:', role);
             setUserRole(role);
             
-            // Auto-navigate based on role if not already on the correct page
-            if (role && event === 'SIGNED_IN') {
+            // Auto-navigate based on role only for successful sign-in
+            if (role && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
               navigateBasedOnRole(role);
             }
             
@@ -94,11 +99,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('Checking existing session:', session?.user?.email);
       if (session) {
         setSession(session);
         setUser(session.user);
         
         fetchUserRole(session.user.id).then(role => {
+          console.log('Existing session role:', role);
           setUserRole(role);
           setLoading(false);
         });
@@ -131,9 +138,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setLoading(true);
     console.log('Attempting to sign up:', email, 'with role:', role);
     
+    // Use the current origin for redirect
     const redirectUrl = `${window.location.origin}/`;
+    console.log('Using redirect URL:', redirectUrl);
     
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -148,6 +157,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (error) {
       console.error('Sign up error:', error);
       setLoading(false);
+    } else {
+      console.log('Sign up successful:', data);
+      // Don't set loading to false here - let the auth state change handle it
     }
 
     return { error };

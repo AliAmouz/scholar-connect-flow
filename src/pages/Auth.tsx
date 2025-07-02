@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { GraduationCap } from "lucide-react";
+import { GraduationCap, Mail } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -19,6 +19,7 @@ const Auth = () => {
   const [fullName, setFullName] = useState("");
   const [selectedRole, setSelectedRole] = useState("parent");
   const [isLoading, setIsLoading] = useState(false);
+  const [showEmailSent, setShowEmailSent] = useState(false);
   const { signIn, signUp, user, userRole } = useAuth();
   const navigate = useNavigate();
 
@@ -58,9 +59,19 @@ const Auth = () => {
     const { error } = await signIn(email, password);
 
     if (error) {
+      let errorMessage = "Invalid email or password";
+      
+      if (error.message?.includes("Email not confirmed")) {
+        errorMessage = "Please check your email and confirm your account before signing in";
+      } else if (error.message?.includes("Invalid login credentials")) {
+        errorMessage = "Invalid email or password. Make sure your account is confirmed.";
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
       toast({
         title: "Login Failed",
-        description: error.message || "Invalid email or password",
+        description: errorMessage,
         variant: "destructive",
       });
     } else {
@@ -129,7 +140,7 @@ const Auth = () => {
         title: "Account Created Successfully",
         description: "Please check your email to verify your account, then sign in.",
       });
-      setIsCreatingAccount(false);
+      setShowEmailSent(true);
       resetForm();
     }
     setIsLoading(false);
@@ -145,8 +156,40 @@ const Auth = () => {
 
   const toggleMode = () => {
     setIsCreatingAccount(!isCreatingAccount);
+    setShowEmailSent(false);
     resetForm();
   };
+
+  if (showEmailSent) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md shadow-xl border-0 bg-white/80 backdrop-blur-sm">
+          <CardHeader className="text-center space-y-4">
+            <div className="mx-auto h-16 w-16 bg-green-600 rounded-full flex items-center justify-center">
+              <Mail className="h-8 w-8 text-white" />
+            </div>
+            <CardTitle className="text-2xl">Check Your Email</CardTitle>
+            <CardDescription>
+              We've sent a verification link to <strong>{email}</strong>
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="text-center text-sm text-gray-600 space-y-2">
+              <p>Please check your email and click the verification link to activate your account.</p>
+              <p>Once verified, you can sign in with your credentials.</p>
+            </div>
+            <Button 
+              onClick={toggleMode}
+              variant="outline" 
+              className="w-full"
+            >
+              Back to Sign In
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 flex items-center justify-center p-4">
@@ -270,7 +313,7 @@ const Auth = () => {
         </Card>
 
         <div className="text-center text-sm text-gray-500">
-          <p>Your role determines which dashboard you'll see after login</p>
+          <p>After creating an account, you'll receive a verification email</p>
           <p className="mt-1">• Admin: Full system access • Teacher: Class management • Parent: Student progress</p>
         </div>
       </div>
