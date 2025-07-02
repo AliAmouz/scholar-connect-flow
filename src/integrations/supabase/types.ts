@@ -316,6 +316,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_missing_profiles: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: Database["public"]["Enums"]["user_role"]

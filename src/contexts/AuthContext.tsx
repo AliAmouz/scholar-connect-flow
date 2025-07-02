@@ -23,26 +23,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Function to fetch user role from profiles table
+  // Function to fetch user role from database
   const fetchUserRole = async (userId: string) => {
     try {
       console.log('Fetching role for user:', userId);
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', userId)
-        .single();
+      
+      // Use the database function to get user role
+      const { data, error } = await supabase.rpc('get_user_role', { 
+        user_uuid: userId 
+      });
 
       if (error) {
         console.error('Error fetching user role:', error);
-        return null;
+        return 'parent'; // Default fallback
       }
 
-      console.log('User role fetched:', data?.role);
-      return data?.role || null;
+      console.log('User role fetched:', data);
+      return data || 'parent';
     } catch (error) {
-      console.error('Error fetching user role:', error);
-      return null;
+      console.error('Error in fetchUserRole:', error);
+      return 'parent'; // Default fallback
     }
   };
 
@@ -57,10 +57,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         navigate('/teacher');
         break;
       case 'parent':
-        navigate('/student/1'); // Default student profile for parents
+        navigate('/student/1');
         break;
       default:
-        console.log('Unknown role, staying on current page');
+        console.log('Unknown role, defaulting to parent dashboard');
+        navigate('/student/1');
         break;
     }
   };
@@ -83,7 +84,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             console.log('Setting user role:', role);
             setUserRole(role);
             
-            // Auto-navigate based on role only for successful sign-in
+            // Auto-navigate based on role for successful sign-in or token refresh
             if (role && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
               navigateBasedOnRole(role);
             }
@@ -159,7 +160,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setLoading(false);
     } else {
       console.log('Sign up successful:', data);
-      // Don't set loading to false here - let the auth state change handle it
+      // Profile will be created automatically by the database trigger
     }
 
     return { error };

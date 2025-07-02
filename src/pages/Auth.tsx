@@ -26,6 +26,7 @@ const Auth = () => {
   // Redirect authenticated users to their appropriate dashboard
   useEffect(() => {
     if (user && userRole) {
+      console.log('User is authenticated, redirecting based on role:', userRole);
       switch (userRole) {
         case 'admin':
           navigate('/admin');
@@ -37,6 +38,7 @@ const Auth = () => {
           navigate('/student/1');
           break;
         default:
+          navigate('/student/1');
           break;
       }
     }
@@ -56,6 +58,7 @@ const Auth = () => {
       return;
     }
 
+    console.log('Attempting login for:', email);
     const { error } = await signIn(email, password);
 
     if (error) {
@@ -69,18 +72,20 @@ const Auth = () => {
         errorMessage = error.message;
       }
 
+      console.error('Login error:', error);
       toast({
         title: "Login Failed",
         description: errorMessage,
         variant: "destructive",
       });
+      setIsLoading(false);
     } else {
+      console.log('Login successful');
       toast({
         title: "Login Successful",
         description: "Redirecting to your dashboard...",
       });
     }
-    setIsLoading(false);
   };
 
   const handleCreateAccount = async (e: React.FormEvent) => {
@@ -117,6 +122,7 @@ const Auth = () => {
       return;
     }
 
+    console.log('Creating account for:', email, 'Role:', selectedRole);
     const { error } = await signUp(email, password, fullName, selectedRole);
 
     if (error) {
@@ -130,20 +136,23 @@ const Auth = () => {
         errorMessage = error.message;
       }
 
+      console.error('Signup error:', error);
       toast({
         title: "Registration Failed",
         description: errorMessage,
         variant: "destructive",
       });
+      setIsLoading(false);
     } else {
+      console.log('Signup successful, showing confirmation message');
       toast({
         title: "Account Created Successfully",
         description: "Please check your email to verify your account, then sign in.",
       });
       setShowEmailSent(true);
       resetForm();
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const resetForm = () => {
@@ -177,6 +186,9 @@ const Auth = () => {
             <div className="text-center text-sm text-gray-600 space-y-2">
               <p>Please check your email and click the verification link to activate your account.</p>
               <p>Once verified, you can sign in with your credentials.</p>
+              <p className="text-xs text-gray-500 mt-4">
+                Note: Your profile with role "{selectedRole}" has been created and will be ready once you verify your email.
+              </p>
             </div>
             <Button 
               onClick={toggleMode}
