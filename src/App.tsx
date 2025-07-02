@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -24,14 +25,16 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <AuthProvider>
-        <BrowserRouter>
+      <BrowserRouter>
+        <AuthProvider>
           <Routes>
-            {/* AUTHENTICATION DISABLED - Redirect auth page to admin dashboard */}
-            <Route path="/auth" element={<Navigate to="/admin" replace />} />
-            <Route path="/" element={<Navigate to="/admin" replace />} />
+            {/* Public authentication route */}
+            <Route path="/auth" element={<Auth />} />
             
-            {/* All routes are now accessible without authentication checks */}
+            {/* Default route redirects to auth - users will be auto-redirected based on role after login */}
+            <Route path="/" element={<Navigate to="/auth" replace />} />
+            
+            {/* Protected admin routes */}
             <Route 
               path="/admin" 
               element={
@@ -88,6 +91,8 @@ const App = () => (
                 </ProtectedRoute>
               } 
             />
+            
+            {/* Protected teacher route */}
             <Route 
               path="/teacher" 
               element={
@@ -96,6 +101,8 @@ const App = () => (
                 </ProtectedRoute>
               } 
             />
+            
+            {/* Protected parent route */}
             <Route 
               path="/student/:id" 
               element={
@@ -104,10 +111,12 @@ const App = () => (
                 </ProtectedRoute>
               } 
             />
+            
+            {/* 404 route */}
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </BrowserRouter>
-      </AuthProvider>
+        </AuthProvider>
+      </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
 );

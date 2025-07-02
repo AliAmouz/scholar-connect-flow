@@ -4,9 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { GraduationCap } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const Auth = () => {
   const [isCreatingAccount, setIsCreatingAccount] = useState(false);
@@ -14,8 +17,29 @@ const Auth = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [selectedRole, setSelectedRole] = useState("parent");
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, user, userRole } = useAuth();
+  const navigate = useNavigate();
+
+  // Redirect authenticated users to their appropriate dashboard
+  useEffect(() => {
+    if (user && userRole) {
+      switch (userRole) {
+        case 'admin':
+          navigate('/admin');
+          break;
+        case 'teacher':
+          navigate('/teacher');
+          break;
+        case 'parent':
+          navigate('/student/1');
+          break;
+        default:
+          break;
+      }
+    }
+  }, [user, userRole, navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,13 +60,13 @@ const Auth = () => {
     if (error) {
       toast({
         title: "Login Failed",
-        description: error.message,
+        description: error.message || "Invalid email or password",
         variant: "destructive",
       });
     } else {
       toast({
         title: "Login Successful",
-        description: "Welcome back!",
+        description: "Redirecting to your dashboard...",
       });
     }
     setIsLoading(false);
@@ -52,7 +76,7 @@ const Auth = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    if (!email || !password || !confirmPassword || !fullName) {
+    if (!email || !password || !confirmPassword || !fullName || !selectedRole) {
       toast({
         title: "Validation Error",
         description: "Please fill in all fields",
@@ -72,18 +96,38 @@ const Auth = () => {
       return;
     }
 
-    const { error } = await signUp(email, password, fullName);
+    if (password.length < 6) {
+      toast({
+        title: "Password Too Short",
+        description: "Password must be at least 6 characters long",
+        variant: "destructive",
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    const { error } = await signUp(email, password, fullName, selectedRole);
 
     if (error) {
+      let errorMessage = "Failed to create account";
+      
+      if (error.message?.includes("already registered")) {
+        errorMessage = "An account with this email already exists";
+      } else if (error.message?.includes("email")) {
+        errorMessage = "Please enter a valid email address";
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
       toast({
         title: "Registration Failed",
-        description: error.message,
+        description: errorMessage,
         variant: "destructive",
       });
     } else {
       toast({
-        title: "Account Created",
-        description: "Please check your email to verify your account",
+        title: "Account Created Successfully",
+        description: "Please check your email to verify your account, then sign in.",
       });
       setIsCreatingAccount(false);
       resetForm();
@@ -96,6 +140,7 @@ const Auth = () => {
     setPassword("");
     setConfirmPassword("");
     setFullName("");
+    setSelectedRole("parent");
   };
 
   const toggleMode = () => {
@@ -129,17 +174,33 @@ const Auth = () => {
           <CardContent>
             <form onSubmit={isCreatingAccount ? handleCreateAccount : handleLogin} className="space-y-4">
               {isCreatingAccount && (
-                <div className="space-y-2">
-                  <Label htmlFor="fullName">Full Name</Label>
-                  <Input
-                    id="fullName"
-                    type="text"
-                    placeholder="Enter your full name"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    className="h-11"
-                  />
-                </div>
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="fullName">Full Name</Label>
+                    <Input
+                      id="fullName"
+                      type="text"
+                      placeholder="Enter your full name"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      className="h-11"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="role">Role</Label>
+                    <Select value={selectedRole} onValueChange={setSelectedRole}>
+                      <SelectTrigger className="h-11">
+                        <SelectValue placeholder="Select your role" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="admin">Administrator</SelectItem>
+                        <SelectItem value="teacher">Teacher</SelectItem>
+                        <SelectItem value="parent">Parent</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </>
               )}
 
               <div className="space-y-2">
@@ -197,6 +258,7 @@ const Auth = () => {
                 variant="link"
                 onClick={toggleMode}
                 className="text-sm text-gray-600 hover:text-gray-800"
+                disabled={isLoading}
               >
                 {isCreatingAccount 
                   ? "Already have an account? Sign in" 
@@ -208,7 +270,8 @@ const Auth = () => {
         </Card>
 
         <div className="text-center text-sm text-gray-500">
-          Your role will be automatically determined based on your account type
+          <p>Your role determines which dashboard you'll see after login</p>
+          <p className="mt-1">• Admin: Full system access • Teacher: Class management • Parent: Student progress</p>
         </div>
       </div>
     </div>

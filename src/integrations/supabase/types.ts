@@ -167,7 +167,7 @@ export type Database = {
           email: string | null
           full_name: string | null
           id: string
-          role: Database["public"]["Enums"]["user_role"] | null
+          role: Database["public"]["Enums"]["user_role"]
           updated_at: string | null
         }
         Insert: {
@@ -175,7 +175,7 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id: string
-          role?: Database["public"]["Enums"]["user_role"] | null
+          role?: Database["public"]["Enums"]["user_role"]
           updated_at?: string | null
         }
         Update: {
@@ -183,7 +183,7 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id?: string
-          role?: Database["public"]["Enums"]["user_role"] | null
+          role?: Database["public"]["Enums"]["user_role"]
           updated_at?: string | null
         }
         Relationships: []
@@ -318,6 +318,10 @@ export type Database = {
     Functions: {
       get_current_user_role: {
         Args: Record<PropertyKey, never>
+        Returns: Database["public"]["Enums"]["user_role"]
+      }
+      get_user_role: {
+        Args: { user_uuid?: string }
         Returns: Database["public"]["Enums"]["user_role"]
       }
     }
