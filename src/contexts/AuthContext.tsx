@@ -139,7 +139,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setLoading(true);
     console.log('Attempting to sign up:', email, 'with role:', role);
     
-    // Facebook-like approach: create account without email confirmation
+    // Since email confirmation is disabled, user will be automatically signed in
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -155,9 +155,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.error('Sign up error:', error);
       setLoading(false);
     } else {
-      console.log('Sign up successful:', data);
+      console.log('Sign up successful, user should be signed in automatically:', data);
       // Profile will be created automatically by the database trigger
-      // User will be automatically signed in if email confirmation is disabled
+      // User will be automatically signed in since email confirmation is disabled
+      // The onAuthStateChange will handle the navigation
     }
 
     return { error };

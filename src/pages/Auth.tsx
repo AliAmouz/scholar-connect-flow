@@ -78,11 +78,12 @@ const Auth = () => {
       });
       setIsLoading(false);
     } else {
-      console.log('Login successful');
+      console.log('Login successful - user will be redirected automatically');
       toast({
         title: "Welcome back!",
         description: "You've successfully signed in.",
       });
+      // Navigation will be handled by AuthContext
     }
   };
 
@@ -142,14 +143,13 @@ const Auth = () => {
       });
       setIsLoading(false);
     } else {
-      console.log('Signup successful, user should be signed in automatically');
+      console.log('Signup successful - user will be signed in automatically');
       toast({
         title: "Welcome to EduManage!",
-        description: "Your account has been created successfully.",
+        description: "Your account has been created successfully. You're now signed in!",
       });
-      setShowSuccessMessage(true);
-      resetForm();
-      setIsLoading(false);
+      // User will be automatically signed in and redirected by AuthContext
+      // No need to show success message or reset form
     }
   };
 
@@ -167,37 +167,7 @@ const Auth = () => {
     resetForm();
   };
 
-  if (showSuccessMessage) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md shadow-xl border-0 bg-white/80 backdrop-blur-sm">
-          <CardHeader className="text-center space-y-4">
-            <div className="mx-auto h-16 w-16 bg-green-600 rounded-full flex items-center justify-center">
-              <CheckCircle className="h-8 w-8 text-white" />
-            </div>
-            <CardTitle className="text-2xl">Account Created!</CardTitle>
-            <CardDescription>
-              Welcome to EduManage! Your account has been created successfully.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="text-center text-sm text-gray-600 space-y-2">
-              <p>You're all set to start using EduManage with your <strong>{selectedRole}</strong> account.</p>
-              <p>You'll be redirected to your dashboard shortly.</p>
-            </div>
-            <Button 
-              onClick={toggleMode}
-              variant="outline" 
-              className="w-full"
-            >
-              Back to Sign In
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
+  // Remove the success message component since users are automatically signed in
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-8">
