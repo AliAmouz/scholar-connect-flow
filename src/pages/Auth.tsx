@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { GraduationCap, Mail } from "lucide-react";
+import { GraduationCap, CheckCircle } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -19,7 +19,7 @@ const Auth = () => {
   const [fullName, setFullName] = useState("");
   const [selectedRole, setSelectedRole] = useState("parent");
   const [isLoading, setIsLoading] = useState(false);
-  const [showEmailSent, setShowEmailSent] = useState(false);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const { signIn, signUp, user, userRole } = useAuth();
   const navigate = useNavigate();
 
@@ -64,10 +64,8 @@ const Auth = () => {
     if (error) {
       let errorMessage = "Invalid email or password";
       
-      if (error.message?.includes("Email not confirmed")) {
-        errorMessage = "Please check your email and confirm your account before signing in";
-      } else if (error.message?.includes("Invalid login credentials")) {
-        errorMessage = "Invalid email or password. Make sure your account is confirmed.";
+      if (error.message?.includes("Invalid login credentials")) {
+        errorMessage = "Invalid email or password. Please check your credentials.";
       } else if (error.message) {
         errorMessage = error.message;
       }
@@ -82,8 +80,8 @@ const Auth = () => {
     } else {
       console.log('Login successful');
       toast({
-        title: "Login Successful",
-        description: "Redirecting to your dashboard...",
+        title: "Welcome back!",
+        description: "You've successfully signed in.",
       });
     }
   };
@@ -144,12 +142,12 @@ const Auth = () => {
       });
       setIsLoading(false);
     } else {
-      console.log('Signup successful, showing confirmation message');
+      console.log('Signup successful, user should be signed in automatically');
       toast({
-        title: "Account Created Successfully",
-        description: "Please check your email to verify your account, then sign in.",
+        title: "Welcome to EduManage!",
+        description: "Your account has been created successfully.",
       });
-      setShowEmailSent(true);
+      setShowSuccessMessage(true);
       resetForm();
       setIsLoading(false);
     }
@@ -165,30 +163,27 @@ const Auth = () => {
 
   const toggleMode = () => {
     setIsCreatingAccount(!isCreatingAccount);
-    setShowEmailSent(false);
+    setShowSuccessMessage(false);
     resetForm();
   };
 
-  if (showEmailSent) {
+  if (showSuccessMessage) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 flex items-center justify-center p-4">
         <Card className="w-full max-w-md shadow-xl border-0 bg-white/80 backdrop-blur-sm">
           <CardHeader className="text-center space-y-4">
             <div className="mx-auto h-16 w-16 bg-green-600 rounded-full flex items-center justify-center">
-              <Mail className="h-8 w-8 text-white" />
+              <CheckCircle className="h-8 w-8 text-white" />
             </div>
-            <CardTitle className="text-2xl">Check Your Email</CardTitle>
+            <CardTitle className="text-2xl">Account Created!</CardTitle>
             <CardDescription>
-              We've sent a verification link to <strong>{email}</strong>
+              Welcome to EduManage! Your account has been created successfully.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="text-center text-sm text-gray-600 space-y-2">
-              <p>Please check your email and click the verification link to activate your account.</p>
-              <p>Once verified, you can sign in with your credentials.</p>
-              <p className="text-xs text-gray-500 mt-4">
-                Note: Your profile with role "{selectedRole}" has been created and will be ready once you verify your email.
-              </p>
+              <p>You're all set to start using EduManage with your <strong>{selectedRole}</strong> account.</p>
+              <p>You'll be redirected to your dashboard shortly.</p>
             </div>
             <Button 
               onClick={toggleMode}
@@ -221,8 +216,8 @@ const Auth = () => {
             </CardTitle>
             <CardDescription className="text-center">
               {isCreatingAccount 
-                ? "Fill in your details to create a new account" 
-                : "Enter your credentials to access the system"
+                ? "Join EduManage and start managing education seamlessly" 
+                : "Welcome back! Sign in to access your dashboard"
               }
             </CardDescription>
           </CardHeader>
@@ -325,7 +320,7 @@ const Auth = () => {
         </Card>
 
         <div className="text-center text-sm text-gray-500">
-          <p>After creating an account, you'll receive a verification email</p>
+          <p>Join thousands of educators and parents using EduManage</p>
           <p className="mt-1">• Admin: Full system access • Teacher: Class management • Parent: Student progress</p>
         </div>
       </div>

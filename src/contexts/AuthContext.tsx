@@ -84,8 +84,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             console.log('Setting user role:', role);
             setUserRole(role);
             
-            // Auto-navigate based on role for successful sign-in or token refresh
-            if (role && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
+            // Auto-navigate based on role for successful sign-in, sign-up, or token refresh
+            if (role && (event === 'SIGNED_IN' || event === 'SIGNED_UP' || event === 'TOKEN_REFRESHED')) {
               navigateBasedOnRole(role);
             }
             
@@ -139,15 +139,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setLoading(true);
     console.log('Attempting to sign up:', email, 'with role:', role);
     
-    // Use the current origin for redirect
-    const redirectUrl = `${window.location.origin}/`;
-    console.log('Using redirect URL:', redirectUrl);
-    
+    // Facebook-like approach: create account without email confirmation
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        emailRedirectTo: redirectUrl,
         data: {
           full_name: fullName,
           role: role
@@ -161,6 +157,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } else {
       console.log('Sign up successful:', data);
       // Profile will be created automatically by the database trigger
+      // User will be automatically signed in if email confirmation is disabled
     }
 
     return { error };
