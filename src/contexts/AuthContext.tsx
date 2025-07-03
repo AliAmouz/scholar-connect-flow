@@ -57,11 +57,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         navigate('/teacher');
         break;
       case 'parent':
-        navigate('/student/1');
+        navigate('/parent');
         break;
       default:
         console.log('Unknown role, defaulting to parent dashboard');
-        navigate('/student/1');
+        navigate('/parent');
         break;
     }
   };

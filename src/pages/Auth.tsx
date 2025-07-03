@@ -35,10 +35,10 @@ const Auth = () => {
           navigate('/teacher');
           break;
         case 'parent':
-          navigate('/student/1');
+          navigate('/parent');
           break;
         default:
-          navigate('/student/1');
+          navigate('/parent');
           break;
       }
     }

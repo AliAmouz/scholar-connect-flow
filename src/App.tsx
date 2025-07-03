@@ -9,6 +9,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Auth from "./pages/Auth";
 import AdminDashboard from "./pages/AdminDashboard";
 import TeacherPanel from "./pages/TeacherPanel";
+import ParentDashboard from "./pages/ParentDashboard";
 import StudentProfile from "./pages/StudentProfile";
 import Students from "./pages/admin/Students";
 import Teachers from "./pages/admin/Teachers";
@@ -80,7 +81,7 @@ const App = () => (
               element={
                 <ProtectedRoute allowedRoles={['admin']}>
                   <Alerts />
-                </ProtectedRoute>
+                </ProtectedRole>
               } 
             />
             <Route 
@@ -102,11 +103,21 @@ const App = () => (
               } 
             />
             
-            {/* Protected parent route */}
+            {/* Protected parent routes */}
+            <Route 
+              path="/parent" 
+              element={
+                <ProtectedRoute allowedRoles={['parent']}>
+                  <ParentDashboard />
+                </ProtectedRoute>
+              } 
+            />
+            
+            {/* Student profile route - accessible by parents and admins */}
             <Route 
               path="/student/:id" 
               element={
-                <ProtectedRoute allowedRoles={['parent']}>
+                <ProtectedRoute allowedRoles={['parent', 'admin']}>
                   <StudentProfile />
                 </ProtectedRoute>
               } 
