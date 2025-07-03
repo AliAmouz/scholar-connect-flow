@@ -84,8 +84,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             console.log('Setting user role:', role);
             setUserRole(role);
             
-            // Auto-navigate based on role for successful sign-in, sign-up, or token refresh
-            if (role && (event === 'SIGNED_IN' || event === 'SIGNED_UP' || event === 'TOKEN_REFRESHED')) {
+            // Auto-navigate based on role for successful sign-in or token refresh
+            if (role && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
               navigateBasedOnRole(role);
             }
             
