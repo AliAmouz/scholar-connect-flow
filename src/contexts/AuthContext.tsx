@@ -1,8 +1,12 @@
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect } from 'react';
 import { User, Session } from '@supabase/supabase-js';
-import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
+import { useAuthState } from '@/hooks/useAuthState';
+import { useUserRole } from '@/hooks/useUserRole';
+import { useAuthActions } from '@/hooks/useAuthActions';
+import { linkParentToStudents } from '@/utils/parentStudentLinking';
+import { navigateBasedOnRole } from '@/utils/authNavigation';
 
 interface AuthContextType {
   user: User | null;
@@ -17,210 +21,36 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [userRole, setUserRole] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { user, session, loading, setLoading } = useAuthState();
+  const { userRole, setUserRole, fetchUserRole } = useUserRole(user);
+  const { signIn, signUp, signOut: authSignOut } = useAuthActions(setLoading);
 
-  // Function to fetch user role from database
-  const fetchUserRole = async (userId: string) => {
-    try {
-      console.log('Fetching role for user:', userId);
-      
-      // Use the database function to get user role
-      const { data, error } = await supabase.rpc('get_user_role', { 
-        user_uuid: userId 
-      });
-
-      if (error) {
-        console.error('Error fetching user role:', error);
-        return 'parent'; // Default fallback
-      }
-
-      console.log('User role fetched:', data);
-      return data || 'parent';
-    } catch (error) {
-      console.error('Error in fetchUserRole:', error);
-      return 'parent'; // Default fallback
-    }
-  };
-
-  // Function to link parent to students after signup
-  const linkParentToStudents = async (userId: string, email: string) => {
-    try {
-      console.log('Linking parent to students:', userId, email);
-      
-      // First check if there are students with this parent email
-      const { data: students, error: studentsError } = await supabase.rpc('get_students_by_parent_email', { 
-        email_address: email 
-      });
-
-      if (studentsError) {
-        console.error('Error checking for students:', studentsError);
-        return;
-      }
-
-      if (students && students.length > 0) {
-        console.log('Found students to link:', students);
-        
-        // Link the parent to students
-        const { error: linkError } = await supabase.rpc('link_parent_to_students', {
-          parent_user_id: userId,
-          parent_email_address: email
-        });
-
-        if (linkError) {
-          console.error('Error linking parent to students:', linkError);
-        } else {
-          console.log('Successfully linked parent to students');
-        }
-      } else {
-        console.log('No students found with parent email:', email);
-      }
-    } catch (error) {
-      console.error('Error in linkParentToStudents:', error);
-    }
-  };
-
-  // Function to handle role-based navigation
-  const navigateBasedOnRole = (role: string) => {
-    console.log('Navigating based on role:', role);
-    switch (role) {
-      case 'admin':
-        navigate('/admin');
-        break;
-      case 'teacher':
-        navigate('/teacher');
-        break;
-      case 'parent':
-        navigate('/parent');
-        break;
-      default:
-        console.log('Unknown role, defaulting to parent dashboard');
-        navigate('/parent');
-        break;
-    }
-  };
-
+  // Handle auth state changes for role fetching and navigation
   useEffect(() => {
-    console.log('Setting up auth state listener');
-    
-    // Set up auth state listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.email);
+    if (user && session) {
+      setTimeout(async () => {
+        const role = await fetchUserRole(user.id);
+        console.log('Setting user role:', role);
+        setUserRole(role);
         
-        setSession(session);
-        setUser(session?.user ?? null);
-
-        if (session?.user) {
-          // Fetch user role when user is authenticated
-          setTimeout(async () => {
-            const role = await fetchUserRole(session.user.id);
-            console.log('Setting user role:', role);
-            setUserRole(role);
-            
-            // If this is a new parent signup, link them to students
-            if (role === 'parent' && event === 'SIGNED_IN' && session.user.email) {
-              await linkParentToStudents(session.user.id, session.user.email);
-            }
-            
-            // Auto-navigate based on role for successful sign-in or token refresh
-            if (role && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
-              navigateBasedOnRole(role);
-            }
-            
-            setLoading(false);
-          }, 0);
-        } else {
-          setUserRole(null);
-          setLoading(false);
+        // If this is a new parent signup, link them to students
+        if (role === 'parent' && user.email) {
+          await linkParentToStudents(user.id, user.email);
         }
-      }
-    );
-
-    // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log('Checking existing session:', session?.user?.email);
-      if (session) {
-        setSession(session);
-        setUser(session.user);
         
-        fetchUserRole(session.user.id).then(role => {
-          console.log('Existing session role:', role);
-          setUserRole(role);
-          setLoading(false);
-        });
-      } else {
+        // Auto-navigate based on role for successful sign-in
+        if (role) {
+          navigateBasedOnRole(role, navigate);
+        }
+        
         setLoading(false);
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate]);
-
-  const signIn = async (email: string, password: string) => {
-    setLoading(true);
-    console.log('Attempting to sign in:', email);
-    
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) {
-      console.error('Sign in error:', error);
-      setLoading(false);
+      }, 0);
     }
-
-    return { error };
-  };
-
-  const signUp = async (email: string, password: string, fullName: string, role: string = 'parent') => {
-    setLoading(true);
-    console.log('Attempting to sign up:', email, 'with role:', role);
-    
-    // Since email confirmation is disabled, user will be automatically signed in
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: fullName,
-          role: role
-        }
-      }
-    });
-
-    if (error) {
-      console.error('Sign up error:', error);
-      setLoading(false);
-    } else {
-      console.log('Sign up successful, user should be signed in automatically:', data);
-      // Profile will be created automatically by the database trigger
-      // User will be automatically signed in since email confirmation is disabled
-      // The onAuthStateChange will handle the navigation and parent-student linking
-    }
-
-    return { error };
-  };
+  }, [user, session, fetchUserRole, setUserRole, navigate, setLoading]);
 
   const signOut = async () => {
-    setLoading(true);
-    console.log('Signing out user');
-    
-    const { error } = await supabase.auth.signOut();
-    
-    if (error) {
-      console.error('Sign out error:', error);
-    }
-    
-    setUser(null);
-    setSession(null);
-    setUserRole(null);
-    setLoading(false);
-    navigate('/auth');
+    await authSignOut(navigate);
   };
 
   return (
