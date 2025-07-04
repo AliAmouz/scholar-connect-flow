@@ -46,6 +46,43 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  // Function to link parent to students after signup
+  const linkParentToStudents = async (userId: string, email: string) => {
+    try {
+      console.log('Linking parent to students:', userId, email);
+      
+      // First check if there are students with this parent email
+      const { data: students, error: studentsError } = await supabase.rpc('get_students_by_parent_email', { 
+        email_address: email 
+      });
+
+      if (studentsError) {
+        console.error('Error checking for students:', studentsError);
+        return;
+      }
+
+      if (students && students.length > 0) {
+        console.log('Found students to link:', students);
+        
+        // Link the parent to students
+        const { error: linkError } = await supabase.rpc('link_parent_to_students', {
+          parent_user_id: userId,
+          parent_email_address: email
+        });
+
+        if (linkError) {
+          console.error('Error linking parent to students:', linkError);
+        } else {
+          console.log('Successfully linked parent to students');
+        }
+      } else {
+        console.log('No students found with parent email:', email);
+      }
+    } catch (error) {
+      console.error('Error in linkParentToStudents:', error);
+    }
+  };
+
   // Function to handle role-based navigation
   const navigateBasedOnRole = (role: string) => {
     console.log('Navigating based on role:', role);
@@ -83,6 +120,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const role = await fetchUserRole(session.user.id);
             console.log('Setting user role:', role);
             setUserRole(role);
+            
+            // If this is a new parent signup, link them to students
+            if (role === 'parent' && event === 'SIGNED_IN' && session.user.email) {
+              await linkParentToStudents(session.user.id, session.user.email);
+            }
             
             // Auto-navigate based on role for successful sign-in or token refresh
             if (role && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
@@ -158,7 +200,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.log('Sign up successful, user should be signed in automatically:', data);
       // Profile will be created automatically by the database trigger
       // User will be automatically signed in since email confirmation is disabled
-      // The onAuthStateChange will handle the navigation
+      // The onAuthStateChange will handle the navigation and parent-student linking
     }
 
     return { error };

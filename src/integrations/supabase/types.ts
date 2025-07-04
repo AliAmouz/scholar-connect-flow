@@ -243,6 +243,7 @@ export type Database = {
           grade_level: number | null
           id: string
           last_name: string
+          parent_email: string | null
           parent_id: string | null
           status: Database["public"]["Enums"]["student_status"] | null
           updated_at: string | null
@@ -256,6 +257,7 @@ export type Database = {
           grade_level?: number | null
           id?: string
           last_name: string
+          parent_email?: string | null
           parent_id?: string | null
           status?: Database["public"]["Enums"]["student_status"] | null
           updated_at?: string | null
@@ -269,6 +271,7 @@ export type Database = {
           grade_level?: number | null
           id?: string
           last_name?: string
+          parent_email?: string | null
           parent_id?: string | null
           status?: Database["public"]["Enums"]["student_status"] | null
           updated_at?: string | null
@@ -324,9 +327,23 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: Database["public"]["Enums"]["user_role"]
       }
+      get_students_by_parent_email: {
+        Args: { email_address: string }
+        Returns: {
+          id: string
+          first_name: string
+          last_name: string
+          grade_level: number
+          status: Database["public"]["Enums"]["student_status"]
+        }[]
+      }
       get_user_role: {
         Args: { user_uuid?: string }
         Returns: Database["public"]["Enums"]["user_role"]
+      }
+      link_parent_to_students: {
+        Args: { parent_user_id: string; parent_email_address: string }
+        Returns: undefined
       }
     }
     Enums: {
