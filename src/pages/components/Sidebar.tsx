@@ -6,21 +6,19 @@ import {
   Users, 
   BookOpen, 
   MessageSquare, 
-  Settings, 
-  LogOut,
+  Settings,
   GraduationCap,
   Calendar,
   BarChart3,
   Menu,
-  X
+  X,
+  UserCheck
 } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
 
 const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { signOut } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
   const menuItems = [
@@ -28,15 +26,11 @@ const Sidebar = () => {
     { icon: Users, label: "Students", path: "/admin/students" },
     { icon: BookOpen, label: "Teachers", path: "/admin/teachers" },
     { icon: Calendar, label: "Classes", path: "/admin/classes" },
+    { icon: UserCheck, label: "Parents", path: "/admin/parents" },
     { icon: BarChart3, label: "Reports", path: "/admin/reports" },
     { icon: MessageSquare, label: "Alerts", path: "/admin/alerts" },
     { icon: Settings, label: "Settings", path: "/admin/settings" },
   ];
-
-  const handleLogout = async () => {
-    await signOut();
-    navigate("/auth");
-  };
 
   const handleMenuClick = (path: string) => {
     navigate(path);
@@ -105,16 +99,7 @@ const Sidebar = () => {
             })}
           </nav>
 
-          <div className="absolute bottom-6 left-6 right-6">
-            <Button
-              variant="outline"
-              className="w-full justify-start gap-3 h-11 text-gray-600 hover:text-red-600 hover:border-red-200"
-              onClick={handleLogout}
-            >
-              <LogOut className="h-5 w-5" />
-              Sign Out
-            </Button>
-          </div>
+          {/* Removed logout button since auth is removed */}
         </div>
       </div>
     </>
