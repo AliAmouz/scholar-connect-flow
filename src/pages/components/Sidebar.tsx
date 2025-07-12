@@ -72,7 +72,7 @@ const Sidebar = () => {
             </div>
             <div>
               <h2 className="text-xl font-bold text-gray-900">EduManage</h2>
-              <p className="text-sm text-gray-500">Admin Panel</p>
+              <p className="text-sm text-gray-500">Admin Dashboard</p>
             </div>
           </div>
 
