@@ -7,10 +7,10 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "12.2.3 (519615d)"
+    PostgrestVersion: "13.0.4"
   }
   public: {
     Tables: {
@@ -67,6 +67,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      announcements: {
+        Row: {
+          content: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          priority: string
+          title: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          priority?: string
+          title: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          priority?: string
+          title?: string
+        }
+        Relationships: []
       }
       attendance: {
         Row: {
@@ -166,6 +193,91 @@ export type Database = {
           },
         ]
       }
+      marks: {
+        Row: {
+          created_at: string
+          id: string
+          mark: number
+          max_mark: number
+          student_id: string
+          subject: string
+          term: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          mark: number
+          max_mark?: number
+          student_id: string
+          subject: string
+          term: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          mark?: number
+          max_mark?: number
+          student_id?: string
+          subject?: string
+          term?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marks_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string
+          description: string | null
+          due_date: string
+          id: string
+          paid_date: string | null
+          status: string
+          student_id: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          description?: string | null
+          due_date: string
+          id?: string
+          paid_date?: string | null
+          status: string
+          student_id: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          description?: string | null
+          due_date?: string
+          id?: string
+          paid_date?: string | null
+          status?: string
+          student_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string | null
@@ -192,6 +304,44 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      services: {
+        Row: {
+          created_at: string
+          id: string
+          monthly_fee: number | null
+          service_name: string
+          status: string
+          student_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          monthly_fee?: number | null
+          service_name: string
+          status?: string
+          student_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          monthly_fee?: number | null
+          service_name?: string
+          status?: string
+          student_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "services_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       student_classes: {
         Row: {
@@ -339,10 +489,10 @@ export type Database = {
       get_students_by_parent_email: {
         Args: { email_address: string }
         Returns: {
-          id: string
           first_name: string
-          last_name: string
           grade_level: number
+          id: string
+          last_name: string
           status: Database["public"]["Enums"]["student_status"]
         }[]
       }
@@ -351,7 +501,7 @@ export type Database = {
         Returns: Database["public"]["Enums"]["user_role"]
       }
       link_parent_to_students: {
-        Args: { parent_user_id: string; parent_email_address: string }
+        Args: { parent_email_address: string; parent_user_id: string }
         Returns: undefined
       }
     }
