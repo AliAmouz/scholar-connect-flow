@@ -6,6 +6,7 @@ import { Search, User } from 'lucide-react';
 import { useParents } from '@/hooks/useParents';
 import { ParentStats } from '@/components/parents/ParentStats';
 import { ParentCard } from '@/components/parents/ParentCard';
+import { AddSampleParentsButton } from '@/components/parents/AddSampleParentsButton';
 
 const Parents = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -43,7 +44,7 @@ const Parents = () => {
             totalChildren={stats.totalChildren}
           />
 
-          <div className="flex items-center space-x-4 mb-6">
+          <div className="flex items-center justify-between mb-6">
             <div className="relative flex-1 max-w-sm">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input
@@ -53,6 +54,7 @@ const Parents = () => {
                 className="pl-9"
               />
             </div>
+            <AddSampleParentsButton />
           </div>
 
           <div className="space-y-6">
